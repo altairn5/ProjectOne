@@ -141,7 +141,7 @@ app.post("/login", function newSession(req,res){
 app.get("/logout", function endSession (req,res){
     console.log("loggingout here")
     req.logout;
-    res.redirect("/home");
+    res.redirect("/login");
 });
 
 //Show Profile
