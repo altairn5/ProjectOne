@@ -56,10 +56,13 @@ app.use(function (req,res,next){
 
 //VIEWS
 
-
+//Home View
 app.get("/home",function (req,res){
 
-res.sendFile(path.join(views, "login.html"));
+if(req.currentUser){
+res.sendFile(path.join(views, "profile.html"));
+}
+res.sendFile(path.join(views, "login.html"))
 
 });
 
@@ -133,10 +136,11 @@ app.post("/login", function newSession(req,res){
     })
 });
 
-//Logout
+//End session
+
 app.get("/logout", function endSession (req,res){
     console.log("loggingout here")
-    res.clearCookie("guid");
+    req.logout;
     res.redirect("/home");
 });
 
