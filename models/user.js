@@ -6,35 +6,14 @@
 // require dependencies
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
+    City = require('./city');
     bcrypt = require('bcrypt');
-
-var CitySchema = new Schema({
-      cityName:{
-        type: String,
-        required: true
-
-      },
-      weather:{
-        type: String,
-        required: true
-      }
-
-    });
 
 
 var userSchema = new Schema({
-  username: {
-    type: String,
-    required: true
-  },
-  passwordDigest: {
-    type: String,
-    required: true
-  },
-
-  
-  //createdAt: {type: Date, default: Date.now()},
-  // cities : [CitySchema]
+  username: String,
+  passwordDigest: String,
+  city: [City.schema]
 });
 
 userSchema.statics.createSecure = function (username, password, cb){
@@ -106,7 +85,4 @@ userSchema.statics.createSecure = function (username, password, cb){
 
 // var Scoreboard = mongoose.model('Scoreboard', ScoreboardSchema);
 var User = mongoose.model('User', userSchema);
-var City = mongoose.model("City", CitySchema);
-
-module.exports = City;
 module.exports = User;

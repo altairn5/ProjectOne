@@ -1,31 +1,16 @@
 <!DOCTYPE html PUBLIC org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
  <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
   <script type="text/javascript" src="app.js"></script>
+
   <link rel="stylesheet" type="text/css" href="style.css"> 
+  
+    <!-- angular -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0/angular.js"></script>
+
+  <!-- ui router -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.18/angular-ui-router.min.js"></script>
 
 
-<!-- 
-// function getScore( teamname ){
-// 	doj = document.getElementById( teamname ).innerHTML;
-// 	return doj-0;
-// }
-
-// function updateScore( teamname, scoretotal ){
-// 	teamname = teamname || "hometeam";
-// 	doj = document.getElementById( teamname );
-// 	doj.innerHTML = (scoretotal<9?"0":"") + scoretotal;
-// }
-
-// function addScore( tname, pointsAwarded ){
-// 	theScore = getScore( tname.name );
-// 	switch( tname.value ){
-// 		case "+": theScore += pointsAwarded; break;
-// 		case "-": theScore -= pointsAwarded; break;
-// 		}
-// 	theScore = theScore < 0 ? 0 : theScore; // disable for negative scores!
-//  	updateScore( tname.name , theScore );
-// }
- -->
 </head>
 
 <body><form id="form1" name="scoreboard" method="post" action="javascript:;" onsubmit="return false;">
