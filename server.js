@@ -9,7 +9,10 @@ path = require('path'),
 bcrypt = require('bcrypt'),
 keygen = require('keygenerator'),
 methodOverride = require('method-override'),
+http = require('http'),
 app = express();
+
+var apiKey = "ab0dc76da6bb6b1544448615fa4b00b1";
 
 
 //path.join("projectOne/", "/public");
@@ -22,12 +25,13 @@ app.use("/vendor", express.static("bower_components"));
 
 //Parse serialized data being posted
 app.use(bodyParser.urlencoded({extended: true})); 
+app.use(bodyParser.json());
 // parse cookie data
 app.use(cookieParser("Super Secret")); 
 
 //Session Setup Process
 app.use(session({ secret: keygen._({specials: true}),
-                  resave: false,
+                  resave: true,
                   saveUninitialized: true
                 })
 );
@@ -50,6 +54,7 @@ app.use(function (req,res,next){
 
         //Looks for user in the db
         db.User.findOne({_id: req.session.userId}, function (err, user) {
+          console.log("user coming back", user)
             if(err) 
             {
                 cb(err, null)
@@ -62,7 +67,7 @@ app.use(function (req,res,next){
     };
 
 // logout the current user
-    req.logout = function () {  
+    req.logout = function (){  
         
         req.session.userId = null;
         req.user = null;
@@ -81,7 +86,7 @@ app.get("/home",function (req,res){
     // Uses currentUser Method to check if user is already signedIn
     if(req.currentUser)
     {
-        res.sendFile(path.join(views, "profile.html"));
+        res.redirect("/profile")
     }
 
     // If new user session send login form
@@ -192,7 +197,7 @@ app.get("/profile", function showProfile (req, res){
 });
 
 
-//Show Username Route Not used yet
+//Provides username to be displayed in the profile page
 app.get("/username", function provideUsername (req, res){
     
 
@@ -200,9 +205,9 @@ app.get("/username", function provideUsername (req, res){
     
         if (user)
         {
-            res.send(user);
+            console.log(user)
+            res.send(user.username);
         }
-        res.redirect('/login');
     });
 //End 
 });
@@ -215,19 +220,36 @@ app.delete("/logout", function (req, res){
     res.redirect("/login");
 });
 
-//City Routes
 
-// app.get('/results', function(req, res) {
-//   var cityWeather = req.body.city;
+/*City Routes*/
 
-//   request('http://api.openweathermap.org/data/2.5/weather?' + place, function(err, response, body) {
-//       if(!err) {
-//         var city = JSON.parse(body);
-//         console.log(city);
-//         res.render('results.ejs', {location: city});
-//       }
-//   });
-// });
+//Get City Info
+app.get('/city', function (req, res) {
+ 
+      var params = req.query.cityName;
+      var cityName = params.replace(" ","+");
+
+      console.log(cityName);
+
+//   var options = {
+//   host: 'www.google.com',
+//   port: 80,
+//   path: '/upload',
+//   method: 'POST'
+// };
+
+      // response is not a data is a cb function
+      http.get('http://api.openweathermap.org/data/2.5/weather?q=' + cityName + "&APPID=" + apiKey, function (response) {
+
+                response.on("data", function(data){
+                  console.log("data HERE", JSON.parse(data));
+                  res.send(JSON.parse(data));
+                })
+          
+      });
+
+});
+
 var listener = app.listen(3000, function () {
 console.log("Listening on port " + listener.address().port);
 });
