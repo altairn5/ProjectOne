@@ -1,88 +1,129 @@
-// var CityObjects = require("./cities.js");
-// var City = CityObjects.model;
-// var CitySchema = CityObjects.Schema;
 
+/*Required dependencies*/
 
-// require dependencies
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema,
-    City = require('./city');
-    bcrypt = require('bcrypt');
+Schema = mongoose.Schema,
+City = require('./city');
+bcrypt = require('bcrypt');
 
 
-var userSchema = new Schema({
-  username: String,
-  passwordDigest: String,
-  city: [City.schema]
-});
+var userSchema = new Schema(
+  {
+    username: String,
+    passwordDigest: String,
+    city: [City.schema]
+  }
+);
+
+/* createSecure Method for secured passwords */
 
 userSchema.statics.createSecure = function (username, password, cb){
-	// `_this` now references our schema
-  var _this = this;
-  // generate some salt
-  bcrypt.genSalt(function (err, salt) {
-    // hash the password with the salt
-    bcrypt.hash(password, salt, function (err, hash) {
-      // build the user object
-      var user = {
-        username: username,
-// 	passwordDigest: hash?
-        passwordDigest: hash
-      };
-      // create a new user in the db with hashed password and execute the callback when done
-      _this.create(user, cb);
+      
+      // `_this` now references UserSchema
+      var _this = this;
+
+      // We could specify salt "work factor" before cb fs
+      //ex.   bcrypt.genSalt(SALT_WORK_FACTOR, function(err, salt) {
+      bcrypt.genSalt(function (err, salt) {
+
+            if(err){
+              return next(err);
+            }
+          // hash the password with the salt
+            bcrypt.hash(password, salt, function (err, hash) {
+              
+                if(err){
+                  return next(err);
+                }
+              // build the user object
+                var user = {username: username,
+                            //  passwordDigest: hash?
+                            passwordDigest: hash
+                           };
+                //Create a new user in the db with hashed password and execute the callback when done
+                _this.create(user, cb);
+            //End bcrypt hash
+            });
+    // End of salt
     });
-  });
+   //End createSecure   
+  };
+
+
+/* Authenticate Method to check if correct user */
+
+userSchema.statics.authenticate = function (username, password, cb) {
+
+    //Find user object using the username
+    this.findOne({username: username}, function (err, user) {
+
+        // throw error if can't find user
+        if (user === null) 
+          {
+          cb("Can't find user with that email", null);
+          } 
+        
+        //If user is found use checkPassword methd
+        if(user)
+        {
+            user.checkPassword(password, function(err, isMatch){
+
+                if(err)
+                {
+                    throw err;
+                } 
+
+                console.log("password ", isMatch);
+
+                //End cb fs inside CP method  
+                })
+
+        
+        // User is found & password is correct, so execute callback
+        // err = null, pas user to server.js as arg in the cb fs
+        cb(null, user);
+        } 
+
+        // If user found, but password incorrect
+        else 
+        {
+            // err = "password incorrect", user = null send back to the server.js
+            cb("password incorrect", null)
+        }
+    
+    //End find user method    
+    });
+
+//End Authenticate method    
+}; 
+    
+
+/*checkPassword Method to compare password entered at login by user */
+
+userSchema.methods.checkPassword = function (password, cb){
+    
+    /* run hashing algorithm (with salt) on password to compare with stored `passwordDigest`
+       `compareSync` is like `compare` but synchronous
+       returns true or false */
+    bcrypt.compareSync(password, this.passwordDigest, function(err, isMatch ){
+        
+        if(err)
+        {
+            return cb(err);
+        }
+
+        cb(null, isMatch);
+
+    //End compareSync   
+    });
+ //End checkPassword   
 };
 
-
-
-// userSchema.statics.authenticate = function(username, password, cb) {
-// //this refers to the schema
-// //find user by username entered at log in
-//   this.findOne({username: username}, function(err, user){
-//   // throw error if can't find user
-//       if ( user === null ){
-//         cb("Username does not exist", null);
-//          // if found user, check if password is correct
-//  //   } else if (user.checkPassword(password)) you can use user.checkPassword
-//  //to check the password or the way below to give the password incorrect error
-//       } else if ( user.password !== password ){
-//         cb("Incorrect password", null);
-//       } else {
-//         cb(null, user);
-//       }
-//   });
-// };
-// Another way
- userSchema.statics.authenticate = function (username, password, cb) {
-//   // find user by email entered at log in
-  console.log("username is", username);
-  this.findOne({username: username}, function (err, user) {
-    // throw error if can't find user
-    if (user === null) {
-      cb("Can't find user with that email", null);
-    // if found user, check if password is correct
-    } else if (user.checkPassword(password)) {
-      // the user is found & password is correct, so execute callback
-      // pass no error, just the user to the callback
-      cb(null, user);
-    } else {
-      // user found, but password incorrect
-      // cb("password incorrect", user) would let user in regarless of password
-      cb("password incorrect", null)
-    }
-  });
- }; 
- //COMPARE PASSWORDS
- userSchema.methods.checkPassword = function (password){
- 	 // run hashing algorithm (with salt) on password to compare with stored `passwordDigest`
-  // `compareSync` is like `compare` but synchronous
-  // returns true or false
-
- 	return bcrypt.compareSync(password, this.passwordDigest);
- };
-
-// var Scoreboard = mongoose.model('Scoreboard', ScoreboardSchema);
+//Export User Model
 var User = mongoose.model('User', userSchema);
 module.exports = User;
+
+
+
+
+

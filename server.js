@@ -34,6 +34,7 @@ app.use(session({
 app.use(function (req,res,next){
     //login a user
     req.login = function (user) {
+      console.log(user._id);
         req.session.userId = user._id;
     };
     //find the current user
@@ -106,6 +107,7 @@ app.post("/signup", function createUser(req, res){
   var password = req.body.password;
 
   db.User.createSecure(username, password, function(err, user){
+    console.log("here comes the user create", user);
     if ( user ) {
         req.login(user);
       // res.cookie("guid", user._id, { signed: true });
@@ -121,7 +123,9 @@ app.post("/signup", function createUser(req, res){
 //Login
 app.post("/login", function newSession(req,res){
     var username = req.body.username;
+    console.log("this is the username coming", username);
     var password = req.body.password;
+    console.log("this is the password coming", password);
 
     db.User.authenticate(username, password, function (err, user){
         if  (user){
