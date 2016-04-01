@@ -81,7 +81,7 @@ app.use(function (req,res,next){
 /*View Routes*/
 
 //Home View
-app.get("/home",function (req,res){
+app.get(("/" , "/home"),function (req,res){
 
     // Uses currentUser Method to check if user is already signedIn
     if(req.currentUser)
@@ -238,14 +238,13 @@ app.get('/city', function (req, res) {
 //   method: 'POST'
 // };
 
-      // response is not a data is a cb function
+      // response is not data is a cb function
       http.get('http://api.openweathermap.org/data/2.5/weather?q=' + cityName + "&APPID=" + apiKey, function (response) {
 
                 response.on("data", function(data){
                   console.log("data HERE", JSON.parse(data));
                   res.send(JSON.parse(data));
                 })
-          
       });
 
 });
