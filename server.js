@@ -81,7 +81,7 @@ app.use(function (req,res,next){
 /*View Routes*/
 
 //Home View
-app.get(("/" , "/home"),function (req,res){
+app.get(["/" , "/home"],function (req,res){
 
     // Uses currentUser Method to check if user is already signedIn
     if(req.currentUser)
@@ -99,6 +99,7 @@ app.get(("/" , "/home"),function (req,res){
 // SignUp Form Route
 app.get("/signup",function (req,res){
 
+    console.log("user sign up form requested");
     res.sendFile(path.join(views, "signup.html"));
 
 //End

@@ -1,33 +1,60 @@
   // On page load
-  var apiKey = "ab0dc76da6bb6b1544448615fa4b00b1";
-  $(function() {
+
+  $(document).ready(function() {
     pageLoad();
   });
 
-  // function definitions
+ 
 
   function pageLoad() {
-  // load city
-  // getWeather();
-  // set event listeners
 
-  // Get Username For Profile Page
-  $.get("/username", function(res){
-    console.log(res);
-    var username = res
-    var user = username.slice(0,1).toUpperCase()+username.slice(1).toLowerCase();
-    $("#welcome").append("<p>Welcome, "+user+"</p>");
-  });
-  $("form").on("submit", function(e){
-    e.preventDefault();
-    // var formData= $(this);
-    var cityName = $(this).serialize();
+    //1)Username Display Call
+    //2)Event Listeners
+ 
+  // On Prile Load Get Username For Profile Page
+
+    $.get("/username", function(res){
+          // console.log(res);
+          var username = res
+          var user = username.slice(0,1).toUpperCase()+username.slice(1).toLowerCase();
+          $("#welcome").append("<p>Welcome, "+user+"</p>");
+    });
+
+
+      //City Weather Request Form
+      $("form").on("submit", function(e){
+        e.preventDefault();
+
+        var cityName = $(this).serialize();
+        getCityWeather(cityName);
+      
+      });
+
+
+      // Save City Event Listener and FS
+
+      $("#saveCity").on("click", function (){
+
+
+      })
+
+
+// End Pageload Fs
+  };
+
+
+
+// Function Get Weather For Submmitted City Name
+  function getCityWeather (city){
+    
+
+    
     $("#search").val(" ");
 
-    console.log("the city name is: " + cityName);
+    console.log("the city name is: " + city);
 
   // tHERE ALSO WAYS TO NOT USE SERIALIZE()
-  $.get("/city", cityName, function(res){
+  $.get("/city", city, function(res){
     
     console.log(res);
     var city = res.name;
@@ -37,20 +64,18 @@
     var sky = res.weather[0].main;
     $('#div-city').empty();
 
-    $('#div-city').append('<p><h1>'+city+'</p>'+'<p>'+temp+'°F</p><p>'+sky+'</p></h1></p>');
+    // $('#div-city').append('<p><h1>'+city+'</p>'+'<p>'+temp+'°F</p><p>'+sky+'</p></h1></p>');
 
-  // var cityWeather = city+temp;
-  // renderWeather(cityWeather);
+    var renderCity = `<p id="cityName">${city}</p><p>${temp}`+'°F'+`</p><p>${sky}</p></p>`;
+    
+    var saveCityButton = "<button id ='saveCity'>"+"Save City"+"</button>";
+
+    $('#div-city').append(renderCity+saveCityButton);
+
   });
-  // .done(function(response){
-  //   console.log(response);
-  //   // append new city to the page
-  //   // getWeather();
-  //   // $("#new-city-form")[0].reset();
-  //   renderWeather(response.data);
-  // });
-  });
-  };
+
+}
+
 
 
   // function renderWeather(city) {
