@@ -35,6 +35,22 @@
 
       $("#saveCity").on("click", function (){
 
+        var newFavCity= $('renderCity').tex();
+
+
+        $.ajax({
+          method:'POST',
+          url:'/city',
+          data: newFavCity,
+          sucess: function(citySaved){
+
+            var city= citySaved
+            $('.favList').append(`<option>${city}</option>`);
+
+          }
+
+        })
+
 
       })
 
@@ -66,11 +82,13 @@
 
     // $('#div-city').append('<p><h1>'+city+'</p>'+'<p>'+temp+'°F</p><p>'+sky+'</p></h1></p>');
 
-    var renderCity = `<p id="cityName">${city}</p><p>${temp}`+'°F'+`</p><p>${sky}</p></p>`;
+    var renderCity = `<p id="cityRender">${city}</p><p>${temp}`+'°F'+`</p><p>${sky}</p></p>`;
     
     var saveCityButton = "<button id ='saveCity'>"+"Save City"+"</button>";
 
     $('#div-city').append(renderCity+saveCityButton);
+
+
 
   });
 

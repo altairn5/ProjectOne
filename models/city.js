@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
 
     var CitySchema = new Schema({
     	cityName: String,
-        weather: String
+        // weather: String
     })
 
 var City = mongoose.model("City", CitySchema);

@@ -54,43 +54,28 @@ userSchema.statics.createSecure = function (username, password, cb){
 
 userSchema.statics.authenticate = function (username, password, cb) {
 
+
+
+
     //Find user object using the username
     this.findOne({username: username}, function (err, user) {
 
         // throw error if can't find user
-        if (user === null) 
+        if (!user) 
           {
           cb("Can't find user with that email", null);
           } 
         
         //If user is found use checkPassword methd
-        if(user)
-        {
-            user.checkPassword(password, function(err, isMatch){
+          else if(user.checkPassword(password)){
 
-                if(err)
-                {
-                    throw err;
-                } 
-
-                console.log("password ", isMatch);
+              cb(null, user);
 
                 //End cb fs inside CP method  
-                })
-
-        
-        // User is found & password is correct, so execute callback
-        // err = null, pas user to server.js as arg in the cb fs
-        cb(null, user);
-        } 
-
-        // If user found, but password incorrect
-        else 
-        {
-            // err = "password incorrect", user = null send back to the server.js
-            cb("password incorrect", null)
-        }
-    
+          }
+          else{
+            cb("Password Is Incorrect, Dude!", null);
+          }
     //End find user method    
     });
 
@@ -100,23 +85,15 @@ userSchema.statics.authenticate = function (username, password, cb) {
 
 /*checkPassword Method to compare password entered at login by user */
 
-userSchema.methods.checkPassword = function (password, cb){
+userSchema.methods.checkPassword = function (password){
     
     /* run hashing algorithm (with salt) on password to compare with stored `passwordDigest`
        `compareSync` is like `compare` but synchronous
        returns true or false */
-    bcrypt.compareSync(password, this.passwordDigest, function(err, isMatch ){
+
+   return bcrypt.compareSync(password, this.passwordDigest);
         
-        if(err)
-        {
-            return cb(err);
-        }
-
-        cb(null, isMatch);
-
-    //End compareSync   
-    });
- //End checkPassword   
+  
 };
 
 //Export User Model

@@ -30,9 +30,11 @@ app.use(bodyParser.json());
 app.use(cookieParser("Super Secret")); 
 
 //Session Setup Process
-app.use(session({ secret: keygen._({specials: true}),
+app.use(session({ 
+                  secret: keygen._({specials: true}),
                   resave: true,
-                  saveUninitialized: true
+                  saveUninitialized: true,
+
                 })
 );
 
@@ -60,6 +62,7 @@ app.use(function (req,res,next){
                 cb(err, null)
             }
 
+//what is req.user = user?
             req.user = user;
             cb(null, user);
         })
@@ -84,13 +87,20 @@ app.use(function (req,res,next){
 app.get(["/" , "/home"],function (req,res){
 
     // Uses currentUser Method to check if user is already signedIn
-    if(req.currentUser)
-    {
-        res.redirect("/profile")
-    }
+    req.currentUser(function (err, user) {
+    
+        if (user === null)
+        {
+            res.redirect("/login");
+        }
+        else
+        {
+            res.sendFile(path.join(views, "show.html"));
+        }
+    })
 
     // If new user session send login form
-    res.sendFile(path.join(views, "login.html"))
+   
 
 //End Home
 });
@@ -152,6 +162,12 @@ app.post("/login", function newSession(req,res){
     var username = req.body.username;
     var password = req.body.password;
 
+    if(!password){
+        res.send("Missing Password")
+    }
+       
+
+
     // Call authenticate method inside user's model file which take 2 arg & 1 cb fs
     db.User.authenticate(username, password, function (err, user){
        
@@ -163,7 +179,8 @@ app.post("/login", function newSession(req,res){
         }
         else
         {
-            console.log(err);
+            console.log("this is the error", err);
+
             res.redirect("/login");
         }
 
@@ -249,6 +266,57 @@ app.get('/city', function (req, res) {
       });
 
 });
+
+app.post('/city', function (req, res) {
+ 
+     var cityName = req.query.cityName;
+
+     req.currentUser(function (err, user){
+
+        if(!user){
+            res.redirect("/login");
+        }
+        user.city.push(cityName);
+        user.save(function(err, cityName){
+
+            if(err)
+            {
+                console.log("error is: ", err)
+            }
+
+             console.log("the songs were added to album: ", savedAlbum);
+             res.send(cityName);
+
+            
+        })
+
+
+
+
+     })
+
+
+       
+
+
+//   var options = {
+//   host: 'www.google.com',
+//   port: 80,
+//   path: '/upload',
+//   method: 'POST'
+// };
+
+      // response is not data is a cb function
+      http.get('http://api.openweathermap.org/data/2.5/weather?q=' + cityName + "&APPID=" + apiKey, function (response) {
+
+                response.on("data", function(data){
+                  console.log("data HERE", JSON.parse(data));
+                  res.send(JSON.parse(data));
+                })
+      });
+
+});
+
 
 var listener = app.listen(3000, function () {
 console.log("Listening on port " + listener.address().port);
