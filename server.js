@@ -271,6 +271,8 @@ app.get('/city', function (req, res) {
 
 });
 
+
+
 app.post('/city', function (req, res) {
 
     console.log("hitting the city route",  req.body);
@@ -300,28 +302,6 @@ app.post('/city', function (req, res) {
 
 })
 
-
-
-       
-
-
-//   var options = {
-//   host: 'www.google.com',
-//   port: 80,
-//   path: '/upload',
-//   method: 'POST'
-// };
-
-      // response is not data is a cb function
-//       http.get('http://api.openweathermap.org/data/2.5/weather?q=' + cityName + "&APPID=" + apiKey, function (response) {
-
-//                 response.on("data", function(data){
-//                   console.log("data HERE", JSON.parse(data));
-//                   res.send(JSON.parse(data));
-//                 })
-//       });
-
-// });
 
 
 var listener = app.listen(3000, function () {
