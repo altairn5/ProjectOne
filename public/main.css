@@ -8,6 +8,7 @@ body{
 	/*wraps up image and in one solid image with no-repeat*/
 	background-size: cover;
 	background-repeat:no-repeat;
+	height: 100vh;
 }
 #gif{
 	opacity: 0.55;
@@ -123,3 +124,5 @@ footer {
 	margin-right: 2px;
 
 }
+
+@media screen and (min-width: )
