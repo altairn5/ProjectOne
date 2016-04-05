@@ -58,12 +58,14 @@ app.use(function (req,res,next){
         db.User.findOne({_id: req.session.userId}, function (err, user) {
           console.log("user coming back", user)
             if(err) 
-            {
+            {   
+                console.log("current user validation error coming back");
                 cb(err, null)
             }
 
 //what is req.user = user?
-            req.user = user;
+            // req.user = user;
+            console.log("Validation worked CB FS next user is equal to ", user);
             cb(null, user);
         })
     //End currentUser
@@ -143,7 +145,7 @@ app.post("/signup", function createUser(req, res){
         {
             req.login(user);
             res.cookie("guid", user._id, { signed: true });
-            res.redirect("/profile")
+            res.redirect("/profile/"+user._id)
         }
         else 
         {
@@ -175,7 +177,7 @@ app.post("/login", function newSession(req,res){
         {
             req.login(user);
             res.cookie("guid", user._id, { signed: true });
-            res.redirect("/profile")
+            res.redirect("/profile/"+user._id)
         }
         else
         {
@@ -198,7 +200,7 @@ app.get("/logout", function endSession (req,res){
 
 
 //Show Profile Route
-app.get("/profile", function showProfile (req, res){
+app.get("/profile/:id", function showProfile (req, res){
    
     // var username = req.body.username;
     req.currentUser(function (err, user) {
@@ -223,8 +225,10 @@ app.get("/username", function provideUsername (req, res){
     
         if (user)
         {
-            console.log(user)
-            res.send(user.username);
+            var userObj = {}
+            userObj.username = user.username;
+            userObj.city = user.city;
+            res.send(userObj);
         }
     });
 //End 
@@ -268,32 +272,34 @@ app.get('/city', function (req, res) {
 });
 
 app.post('/city', function (req, res) {
- 
-     var cityName = req.query.cityName;
+
+    console.log("hitting the city route",  req.body);
+     var cityName = req.body.city;
+     console.log(`the city name is ${cityName}`);
+     console.log("req.session.userID = ", req.session.userId);
+
 
      req.currentUser(function (err, user){
 
-        if(!user){
-            res.redirect("/login");
-        }
-        user.city.push(cityName);
-        user.save(function(err, cityName){
-
-            if(err)
+         if(err)
             {
                 console.log("error is: ", err)
             }
 
-             console.log("the songs were added to album: ", savedAlbum);
-             res.send(cityName);
-
+            user.city.push(cityName);
+            user.save(function(err, cityName){
+            if(err){
+                console.log("error is", err);
+            }
+            console.log("the songs were added to album: ", cityName);
+            res.send(user.city);
             
         })
 
-
-
-
      })
+
+})
+
 
 
        
@@ -307,15 +313,15 @@ app.post('/city', function (req, res) {
 // };
 
       // response is not data is a cb function
-      http.get('http://api.openweathermap.org/data/2.5/weather?q=' + cityName + "&APPID=" + apiKey, function (response) {
+//       http.get('http://api.openweathermap.org/data/2.5/weather?q=' + cityName + "&APPID=" + apiKey, function (response) {
 
-                response.on("data", function(data){
-                  console.log("data HERE", JSON.parse(data));
-                  res.send(JSON.parse(data));
-                })
-      });
+//                 response.on("data", function(data){
+//                   console.log("data HERE", JSON.parse(data));
+//                   res.send(JSON.parse(data));
+//                 })
+//       });
 
-});
+// });
 
 
 var listener = app.listen(3000, function () {

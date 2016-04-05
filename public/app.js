@@ -1,62 +1,52 @@
   // On page load
 
-  $(document).ready(function() {
+  $(document).ready(function(){
     pageLoad();
   });
 
- 
-
   function pageLoad() {
 
-    //1)Username Display Call
-    //2)Event Listeners
- 
-  // On Prile Load Get Username For Profile Page
-
-    $.get("/username", function(res){
-          // console.log(res);
-          var username = res
-          var user = username.slice(0,1).toUpperCase()+username.slice(1).toLowerCase();
-          $("#welcome").append("<p>Welcome, "+user+"</p>");
-    });
+           /* 1)Username Display Call
+            2)Event Listeners
+            On Prile Load Get Username For Profile Page*/
 
 
-      //City Weather Request Form
-      $("form").on("submit", function(e){
-        e.preventDefault();
+            $.get("/username", function(res){
+                    
+                    var username = res.username
 
-        var cityName = $(this).serialize();
-        getCityWeather(cityName);
-      
-      });
+                    var user = username.slice(0,1).toUpperCase()+username.slice(1).toLowerCase();
+                    $("#welcome").append("<p>Welcome, "+user+"</p>");
+                    
+                    // Call City Fav fs
+                    displayFavorites(res.city);
 
-
-      // Save City Event Listener and FS
-
-      $("#saveCity").on("click", function (){
-
-        var newFavCity= $('renderCity').tex();
+            });
 
 
-        $.ajax({
-          method:'POST',
-          url:'/city',
-          data: newFavCity,
-          sucess: function(citySaved){
+            //New City Weather Event
+            $("form").on("submit", function(e){
+                  
+                  e.preventDefault();
 
-            var city= citySaved
-            $('.favList').append(`<option>${city}</option>`);
-
-          }
-
-        })
+                  var cityName = $(this).serialize();
+                  $(this).unbind(e);
+                  getCityWeather(cityName);
 
 
-      })
+            });
 
 
-// End Pageload Fs
-  };
+            // Dinamically Added #SaveCity Button needs triggers addCityToFavs fs
+            $(document).on('click','#saveCity', function (){
+
+                  addCityToFavs();
+
+            })
+
+        // End Pageload Fs
+        };
+
 
 
 
@@ -84,16 +74,44 @@
 
     var renderCity = `<p id="cityRender">${city}</p><p>${temp}`+'°F'+`</p><p>${sky}</p></p>`;
     
-    var saveCityButton = "<button id ='saveCity'>"+"Save City"+"</button>";
+    var saveCityButton = "<button class='btn btn-default saveCity' id='saveCity'>Save City</button>";
 
     $('#div-city').append(renderCity+saveCityButton);
-
-
 
   });
 
 }
 
+function addCityToFavs(){
+
+        var newFavCity= $('#cityRender').text();
+        console.log(newFavCity);
+
+        $('#div-city').children('p').remove();
+
+
+        $.ajax({
+          method:'POST',
+          url:'/city',
+          data: {city: newFavCity},
+          success: function(data){
+            //Iteration FS 
+          displayFavorites(data); 
+          $('#saveCity').remove(); 
+          }
+         
+        })
+
+}
+
+function displayFavorites(citiesArray){
+
+    $.each(citiesArray,function(index, city){
+
+            $('.favList').append(`<option>${city}</option>`);
+
+            })
+    }
 
 
   // function renderWeather(city) {

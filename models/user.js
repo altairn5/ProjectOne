@@ -11,7 +11,7 @@ var userSchema = new Schema(
   {
     username: String,
     passwordDigest: String,
-    city: [City.schema]
+    city: [String]
   }
 );
 
