@@ -75,64 +75,46 @@
     // End getCityWeather fs
     }
 
+    // Add New City to Favs FS
+    function addCityToFavs(){
 
+          var newFavCity= $('#cityRender').text();
+          console.log(newFavCity);
 
+          // Removes City Info as it Gets Added to Favs
+          $('#div-city').children('p').remove();
 
+          // Ajax call 
+          $.ajax({
+              method:'POST',
+              url:'/city',
+              data: {city: newFavCity},
+              success: function(data){
 
-function addCityToFavs(){
+                          //City Array Displayed with fs
+                          displayFavorites(data); 
+                          $('#saveCity').remove(); 
 
-        var newFavCity= $('#cityRender').text();
-        console.log(newFavCity);
-
-        $('#div-city').children('p').remove();
-
-
-        $.ajax({
-          method:'POST',
-          url:'/city',
-          data: {city: newFavCity},
-          success: function(data){
-            //Iteration FS 
-          displayFavorites(data); 
-          $('#saveCity').remove(); 
-          }
-         
-        })
-
-}
-
-function displayFavorites(citiesArray){
-
-    $.each(citiesArray,function(index, city){
-
-            $('.favList').append(`<option>${city}</option>`);
-
-            })
+              // End Success fs
+              }
+          // End Ajax Call
+          })
+    // End Add New City to Favs fs
     }
 
 
-  // function renderWeather(city) {
-  //  var template = _.template($("#city-template").html());
-  //   // input city into template and append to parent
-  //   console.log(template);
-  //   var weatherItems = city.map(function(city) {
-  //     return template(city);
-  //   // clear content (for repeated use)
-  //   $("#div-city").html("");
-  //   // $("#div-temp").html("");
-  //   // append city to div
-  //   $("#div-city").append(weatherItems);
-  //   // $("#div-temp").append(temp);
-  // });
+    function displayFavorites(citiesArray){
 
-  // function deleteWeather(context) {
-  //   var weatherId = $(context).data()._id;
-  //   $.ajax({
-  //     url: '/results/' + weatherId,
-  //     type: 'DELETE',
-  //     success: function(res) {
-  //       // once successfull, re-render all city
-  //       getWeather();
-  //     }
-  //   });
-  // }
+        // Iterates Through City Array and Display Them 
+        $.each(citiesArray,function(index, city){
+
+                $('.favList').append(`<option>${city}</option>`);
+
+                })
+    // End of fs
+    }
+
+
+
+
+
