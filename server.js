@@ -18,6 +18,8 @@ var apiKey = "ab0dc76da6bb6b1544448615fa4b00b1";
 //path.join("projectOne/", "/public");
 var views = path.join(process.cwd(), "/views");
 
+
+
 /*CONFIG 
 .js & .css files + vendor files*/
 app.use("/static", express.static("public"));
