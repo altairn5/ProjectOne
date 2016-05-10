@@ -12,6 +12,8 @@ methodOverride = require('method-override'),
 http = require('http'),
 app = express();
 
+var port = (process.env.PORT || 3000);
+
 var apiKey = "ab0dc76da6bb6b1544448615fa4b00b1";
 
 
@@ -311,7 +313,7 @@ app.post('/city', function (req, res) {
 // });
 
 // var port = Number(process.env.PORT || 3000);
-var port = (process.env.PORT || 3000);
+
 app.listen(port, function(){
     console.log("small weather app server listening at port 3000");
 });
