@@ -310,5 +310,8 @@ app.post('/city', function (req, res) {
 // console.log("Listening on port " + listener.address().port);
 // });
 
-var port = Number(process.env.PORT || 3000);
-app.listen(port);
+// var port = Number(process.env.PORT || 3000);
+var port = (process.env.PORT || 3000);
+app.listen(port, function(){
+    console.log("small weather app server listening at port 3000");
+});
