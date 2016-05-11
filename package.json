@@ -20,9 +20,11 @@
   "dependencies": {
     "bcrypt": "^0.8.6",
     "body-parser": "^1.15.0",
+    "bootstrap": "^3.3.6",
     "cookie-parser": "^1.4.1",
     "express": "^4.13.4",
     "hbs": "^4.0.0",
+    "jquery": "^2.2.3",
     "keygen": "^0.2.1",
     "keygenerator": "^1.0.4",
     "mongoose": "^4.4.4",
