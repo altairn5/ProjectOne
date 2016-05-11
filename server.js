@@ -12,7 +12,7 @@ methodOverride = require('method-override'),
 http = require('http'),
 app = express();
 
-app.set('port', (process.env.PORT || 3000));
+app.set('port', (process.env.PORT || 5000));
 
 var apiKey = "ab0dc76da6bb6b1544448615fa4b00b1";
 
