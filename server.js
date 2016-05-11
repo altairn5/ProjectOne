@@ -308,12 +308,6 @@ app.post('/city', function (req, res) {
 
 
 
-// var listener = app.listen(3000, function () {
-// console.log("Listening on port " + listener.address().port);
-// });
-
-// var port = Number(process.env.PORT || 3000);
-
 app.listen(app.get('port'), function(){
     console.log("small weather app server listening at port 5000");
 });
