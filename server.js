@@ -25,7 +25,6 @@ var views = path.join(process.cwd(), "/views");
 /*CONFIG 
 .js & .css files + vendor files*/
 app.use("/static", express.static("public"));
-// app.use("/vendor", express.static("bower_components"));   
 app.use("/vendor", express.static(__dirname + '/node_modules'));        
 
 //Parse serialized data being posted
